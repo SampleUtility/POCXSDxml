@@ -1,1 +1,2 @@
 "inventory-tso-us"|false|Product Sku Inventory TSO|false|false|"133770-tso-us"|1000|2017-01-17T23:20:06.000Z|false|none|2017-01-16Z|2017-01-16T05:00:00.000Z|1000|0|0|"isBackInStock"|"isBackInStockNotified"|"isOutOfStock"|"isOutOfStockNotified"|false
+"inventory-tso-uk"|false|Product Sku Inventory TSO|false|false|"133771-tso-uk"|1000|2017-01-17T23:20:06.000Z|false|none|2017-01-16Z|2017-01-16T05:00:00.000Z|1000|0|0|"isBackInStock"|"isBackInStockNotified"|"isOutOfStock"|"isOutOfStockNotified"|false

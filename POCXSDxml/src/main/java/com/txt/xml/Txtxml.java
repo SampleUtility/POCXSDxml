@@ -54,18 +54,23 @@ public class Txtxml {
           serializer.setOutputProperty(OutputKeys.INDENT,"yes");
           th.setResult(out);
           th.startDocument();
-          atts = new AttributesImpl();
+         
           th.startElement("http://www.demandware.com/xml/impex/inventory/2007-05-31","","inventory-list",atts);
     }
 
     public void process (String s) throws SAXException 
     {
         String [] elements = s.split("\\|");
+        atts = new AttributesImpl();
         atts.clear();
-             
+       String head="header list-id="+elements[0];
+       String proid="product-id="+elements[5];
+       String cattid1= "custom-attribute attribute-id="+elements[15];
+       String cattid2= "custom-attribute attribute-id="+elements[16];
+       String cattid3= "custom-attribute attribute-id="+elements[17];
+       String cattid4= "custom-attribute attribute-id="+elements[18];
         
-        th.startElement("","","header list-id=",atts);
-        th.characters(elements[0].toCharArray(),0,elements[0].length());
+        th.startElement("","",head,atts);
         th.startElement("","","default-instock",atts) ;
         th.characters(elements[1].toCharArray(),0,elements[1].length());
         th.endElement("","","default-instock");
@@ -80,9 +85,8 @@ public class Txtxml {
         th.endElement("","","on-order");
         th.endElement("","","header");
         th.startElement("","","records",atts);
-        th.startElement("","","product-id=",atts);
-        th.characters(elements[5].toCharArray(),0,elements[5].length());
-        
+        th.startElement("","",proid,atts);
+               
         th.startElement("","","allocation",atts);
         th.characters(elements[6].toCharArray(),0,elements[6].length());
         th.endElement("","","allocation");
@@ -121,27 +125,19 @@ public class Txtxml {
         
         th.startElement("","","custom-attributes",atts);
         
-        th.startElement("","","custom-attribute attribute-id=",atts);
-        th.characters(elements[15].toCharArray(),0,elements[15].length());
-        th.startElement("","","",atts);
+        th.startElement("","",cattid1,atts);
         th.characters(elements[19].toCharArray(),0,elements[19].length());
         th.endElement("","","custom-attribute");
         
-        th.startElement("","","custom-attribute attribute-id=",atts);
-        th.characters(elements[16].toCharArray(),0,elements[16].length());
-        th.startElement("","","",atts);
+        th.startElement("","",cattid2,atts);
         th.characters(elements[19].toCharArray(),0,elements[19].length());
         th.endElement("","","custom-attribute");
         
-        th.startElement("","","custom-attribute attribute-id=",atts);
-        th.characters(elements[17].toCharArray(),0,elements[17].length());
-        th.startElement("","","",atts);
+        th.startElement("","",cattid3,atts);
         th.characters(elements[19].toCharArray(),0,elements[19].length());
         th.endElement("","","custom-attribute");
         
-        th.startElement("","","custom-attribute attribute-id=",atts);
-        th.characters(elements[18].toCharArray(),0,elements[18].length());
-        th.startElement("","","",atts);
+        th.startElement("","",cattid4,atts);
         th.characters(elements[19].toCharArray(),0,elements[19].length());
         th.endElement("","","custom-attribute");
         th.endElement("","","custom-attributes");
