@@ -129,14 +129,20 @@ public class Txtxml {
         
         th.startElement("","","custom-attribute attribute-id=",atts);
         th.characters(elements[16].toCharArray(),0,elements[16].length());
+        th.startElement("","","",atts);
+        th.characters(elements[19].toCharArray(),0,elements[19].length());
         th.endElement("","","custom-attribute");
         
         th.startElement("","","custom-attribute attribute-id=",atts);
         th.characters(elements[17].toCharArray(),0,elements[17].length());
+        th.startElement("","","",atts);
+        th.characters(elements[19].toCharArray(),0,elements[19].length());
         th.endElement("","","custom-attribute");
         
         th.startElement("","","custom-attribute attribute-id=",atts);
         th.characters(elements[18].toCharArray(),0,elements[18].length());
+        th.startElement("","","",atts);
+        th.characters(elements[19].toCharArray(),0,elements[19].length());
         th.endElement("","","custom-attribute");
         th.endElement("","","custom-attributes");
         
