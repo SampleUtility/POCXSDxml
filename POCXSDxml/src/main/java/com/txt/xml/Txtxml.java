@@ -43,6 +43,10 @@ public class Txtxml {
 	
 	public void initXML() throws ParserConfigurationException,TransformerConfigurationException,SAXException 
     {
+		 String head="header list-id=\"inventory-tso-us";
+		 String boolval="false";
+		 String desc="Product Sku Inventory TSO";
+		
           // JAXP + SAX
           SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
          
@@ -55,7 +59,27 @@ public class Txtxml {
           th.setResult(out);
           th.startDocument();
          
-          th.startElement("http://www.demandware.com/xml/impex/inventory/2007-05-31","","inventory-list",atts);
+          th.startElement("http://www.demandware.com/xml/impex/inventory/2007-05-31","","inventory	",atts);
+          th.startElement("","","inventory-list",atts);
+          th.startElement("","",head,atts);
+          th.startElement("","","default-instock",atts) ;
+          th.characters(boolval.toCharArray(),0,boolval.length());
+          th.endElement("","","default-instock");
+                    
+          th.startElement("","","description",atts);
+          th.characters(desc.toCharArray(),0,desc.length());
+          th.endElement("","","description");
+          
+          th.startElement("","","use-bundle-inventory-only",atts);
+          th.characters(boolval.toCharArray(),0,boolval.length());
+          th.endElement("","","use-bundle-inventory-only");
+          
+          th.startElement("","","on-order",atts);
+          th.characters(boolval.toCharArray(),0,boolval.length());
+          th.endElement("","","on-order");
+          th.endElement("","","header");
+          th.startElement("","","records",atts);
+          th.startElement("","","record",atts);
     }
 
     public void process (String s) throws SAXException 
@@ -63,28 +87,14 @@ public class Txtxml {
         String [] elements = s.split("\\|");
         atts = new AttributesImpl();
         atts.clear();
-       String head="header list-id="+elements[0];
+      
        String proid="product-id="+elements[5];
        String cattid1= "custom-attribute attribute-id="+elements[15];
        String cattid2= "custom-attribute attribute-id="+elements[16];
        String cattid3= "custom-attribute attribute-id="+elements[17];
        String cattid4= "custom-attribute attribute-id="+elements[18];
         
-        th.startElement("","",head,atts);
-        th.startElement("","","default-instock",atts) ;
-        th.characters(elements[1].toCharArray(),0,elements[1].length());
-        th.endElement("","","default-instock");
-        th.startElement("","","description",atts);
-        th.characters(elements[2].toCharArray(),0,elements[2].length());
-        th.endElement("","","description");
-        th.startElement("","","use-bundle-inventory-only",atts);
-        th.characters(elements[3].toCharArray(),0,elements[3].length());
-        th.endElement("","","use-bundle-inventory-only");
-        th.startElement("","","on-order",atts);
-        th.characters(elements[4].toCharArray(),0,elements[4].length());
-        th.endElement("","","on-order");
-        th.endElement("","","header");
-        th.startElement("","","records",atts);
+        
         th.startElement("","",proid,atts);
                
         th.startElement("","","allocation",atts);
@@ -143,14 +153,14 @@ public class Txtxml {
         th.endElement("","","custom-attributes");
         
         th.endElement("","","record");
-        th.endElement("","","records");
-        
-        th.endElement("","","inventory-list");
+       
         
     }
  
     public void closeXML()throws SAXException{
     { 
+    	 th.endElement("","","records");
+         th.endElement("","","inventory-list");
         th.endElement("","","inventory");
         th.endDocument();  
     }
