@@ -1,12 +1,13 @@
 package com.txt.xml;
 
 import java.io.BufferedReader;
+
 import java.io.FileInputStream;
-import java.io.FileReader;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.logging.Logger;
 
+import org.apache.log4j.Logger;
 //SAX classes.
 import org.xml.sax.*;
 import javax.xml.transform.*;
@@ -19,6 +20,7 @@ import org.xml.sax.helpers.AttributesImpl;
 
 public class Txtxml {
 
+	final static Logger logger = Logger.getLogger(Txtxml.class);
 	private final static String DEFAULT_INSTOCK = "false";
 	private final static String BUNDLE_INVENTORY = "false";
 	private final static String ON_ORDER = "false";
@@ -26,32 +28,37 @@ public class Txtxml {
 	private final static String PREORDER_BACKORDER_HANDLING = "none";
 	private final static String TURN_OVER = "0";
 	private final static String ON_ORDER_VALUE = "0";
-	private final static String HEAD = "header list-id=\"inventory-tso-us";
+	private final static String HEAD = "header list-id=\"inventory-tso-us\"";
+	private final static String RECORD_PRD_ID = "record product-id=";
 	private final static String DESC = "Product Sku Inventory TSO";
-
+	private final static String PATH = "C:\\WORK\\";
 	TransformerHandler th;
 	AttributesImpl atts;
-	BufferedReader in;
-	StreamResult out;
+	BufferedReader infile;
+	StreamResult outfile;
 
-	public void readit() throws SAXException, TransformerConfigurationException, ParserConfigurationException {
+	public void readit()
+			throws SAXException, TransformerConfigurationException, ParserConfigurationException, NullPointerException {
+		String record;
 		try {
-			//System.out.print("PATH"+System.getenv("THE_PATH_ENV"));
-			FileInputStream fis = new FileInputStream(("E:\\Workspace\\input\\out\\poc.txt"));
-			in = new BufferedReader(new InputStreamReader(fis));
-			out = new StreamResult("E:\\Workspace\\input\\out\\pocout.xml");
-			String record;
+			logger.info("Loading input file from C:\\WORK\\FTCHINVT.txt");
+			String inPath = PATH.concat("FTCHINVT.txt");
+			String outPath = PATH.concat("FTCHINVT.xml");
+			FileInputStream fis = new FileInputStream(inPath);
+			infile = new BufferedReader(new InputStreamReader(fis));
+			outfile = new StreamResult(outPath);
+
 			initXML();
 
-			while ((record = in.readLine()) != null) {
+			while ((record = infile.readLine()) != null) {
 				process(record);
 			}
-			in.close();
+			infile.close();
 
 			closeXML();
-
+			logger.info("C:\\WORK\\FTCHINVT.XML is generated sucessfully");
 		} catch (IOException e) {
-			e.printStackTrace();
+			logger.error("There is input output error"+ e);
 		}
 	}
 
@@ -62,12 +69,13 @@ public class Txtxml {
 		th = tf.newTransformerHandler();
 		Transformer serializer = th.getTransformer();
 		serializer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
-		// printing XML output
+		
+		logger.info("Processing xml file output");
 		serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 		serializer.setOutputProperty(OutputKeys.INDENT, "yes");
-		th.setResult(out);
+		th.setResult(outfile);
 		th.startDocument();
-
+		logger.info("XML starts with Header");
 		th.startElement("http://www.demandware.com/xml/impex/inventory/2007-05-31", "", "inventory	", atts);
 		th.startElement("", "", "inventory-list", atts);
 		th.startElement("", "", HEAD, atts);
@@ -88,21 +96,19 @@ public class Txtxml {
 		th.endElement("", "", "on-order");
 		th.endElement("", "", "header");
 		th.startElement("", "", "records", atts);
-		th.startElement("", "", "record", atts);
+		logger.info("XML Header ends");
 	}
 
 	public void process(String str) throws SAXException {
 		String[] elements = str.split("\\|");
-		atts = new AttributesImpl();
-		atts.clear();
-
-		String proid = "product-id=" + elements[8] + "-tso-us";
 		String qty_avail = elements[11];
 		String qty_value = elements[12];
+		atts = new AttributesImpl();
+		atts.clear();
+		
+		String proid = RECORD_PRD_ID + "\""+ elements[8] + "-tso-us"+"\"";
 		String alloc = Double.toString(quantitycheck(qty_avail, qty_value));
-
-		th.startElement("", "", proid, atts);
-
+		th.startElement("", "",proid, atts);
 		th.startElement("", "", "allocation", atts);
 		th.characters(alloc.toCharArray(), 0, alloc.length());
 		th.endElement("", "", "allocation");
@@ -140,7 +146,7 @@ public class Txtxml {
 		th.endElement("", "", "turnover");
 
 		th.endElement("", "", "record");
-
+		
 	}
 
 	public void closeXML() throws SAXException {
@@ -149,6 +155,7 @@ public class Txtxml {
 			th.endElement("", "", "inventory-list");
 			th.endElement("", "", "inventory");
 			th.endDocument();
+			logger.info("XML Inventory ends ");
 		}
 	}
 
@@ -156,14 +163,11 @@ public class Txtxml {
 		double qty = 0.0;
 		if (qty_value.equals("-")) {
 			qty = Double.parseDouble("-" + qty_avail);
-		} else
-
+		} 
+		else
 		{
-
 			qty = Double.parseDouble(qty_avail);
-
 		}
 		return qty;
-
 	}
 }
