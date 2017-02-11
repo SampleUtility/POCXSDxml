@@ -1,12 +1,9 @@
 package com.txt.xml;
 
 import java.io.BufferedReader;
-
 import java.io.FileInputStream;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import org.apache.log4j.Logger;
 //SAX classes.
 import org.xml.sax.*;
@@ -15,7 +12,6 @@ import javax.xml.transform.sax.*;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.sax.SAXTransformerFactory;
 import javax.xml.transform.stream.StreamResult;
-
 import org.xml.sax.helpers.AttributesImpl;
 
 public class Txtxml {
@@ -58,7 +54,7 @@ public class Txtxml {
 			closeXML();
 			logger.info("C:\\WORK\\FTCHINVT.XML is generated sucessfully");
 		} catch (IOException e) {
-			logger.error("There is input output error"+ e);
+			logger.error("There is input output error" + e);
 		}
 	}
 
@@ -69,7 +65,7 @@ public class Txtxml {
 		th = tf.newTransformerHandler();
 		Transformer serializer = th.getTransformer();
 		serializer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
-		
+
 		logger.info("Processing xml file output");
 		serializer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 		serializer.setOutputProperty(OutputKeys.INDENT, "yes");
@@ -97,6 +93,7 @@ public class Txtxml {
 		th.endElement("", "", "header");
 		th.startElement("", "", "records", atts);
 		logger.info("XML Header ends");
+
 	}
 
 	public void process(String str) throws SAXException {
@@ -105,16 +102,22 @@ public class Txtxml {
 		String qty_value = elements[12];
 		atts = new AttributesImpl();
 		atts.clear();
+
+		String[] date = elements[2].split("\\-");
+		String[] tm = date[3].split("\\.");
+		String mm = (tm[3].substring(0, tm[3].length() / 2) + "Z");
+		String timeStp = date[0] + "-" + date[1] + "-" + date[2] + "T" + tm[0] + ":" + tm[1] + ":" + tm[2] + "." + mm;
+
 		
-		String proid = RECORD_PRD_ID + "\""+ elements[8] + "-tso-us"+"\"";
+		String proid = RECORD_PRD_ID + "\"" + elements[8] + "-tso-us" + "\"";
 		String alloc = Double.toString(quantitycheck(qty_avail, qty_value));
-		th.startElement("", "",proid, atts);
+		th.startElement("", "", proid, atts);
 		th.startElement("", "", "allocation", atts);
 		th.characters(alloc.toCharArray(), 0, alloc.length());
 		th.endElement("", "", "allocation");
 
 		th.startElement("", "", "allocation-timestamp", atts);
-		th.characters(elements[2].toCharArray(), 0, elements[2].length());
+		th.characters(timeStp.toCharArray(), 0, timeStp.length());
 		th.endElement("", "", "allocation-timestamp");
 
 		th.startElement("", "", "perpetual", atts);
@@ -125,14 +128,15 @@ public class Txtxml {
 		th.characters(PREORDER_BACKORDER_HANDLING.toCharArray(), 0, PREORDER_BACKORDER_HANDLING.length());
 		th.endElement("", "", "preorder-backorder-handling");
 
-		th.startElement("", "", "in-stock-date", atts);
-		th.characters(elements[2].toCharArray(), 0, elements[2].length());
-		th.endElement("", "", "in-stock-date");
-
-		th.startElement("", "", "in-stock-datetime", atts);
-		th.characters(elements[2].toCharArray(), 0, elements[2].length());
-		th.endElement("", "", "in-stock-datetime");
-
+		/*
+		 * th.startElement("", "", "in-stock-date", atts);
+		 * th.characters(elements[2].toCharArray(), 0, elements[2].length());
+		 * th.endElement("", "", "in-stock-date");
+		 * 
+		 * th.startElement("", "", "in-stock-datetime", atts);
+		 * th.characters(elements[2].toCharArray(), 0, elements[2].length());
+		 * th.endElement("", "", "in-stock-datetime");
+		 */
 		th.startElement("", "", "ats", atts);
 		th.characters(alloc.toCharArray(), 0, alloc.length());
 		th.endElement("", "", "ats");
@@ -146,7 +150,7 @@ public class Txtxml {
 		th.endElement("", "", "turnover");
 
 		th.endElement("", "", "record");
-		
+
 	}
 
 	public void closeXML() throws SAXException {
@@ -156,6 +160,7 @@ public class Txtxml {
 			th.endElement("", "", "inventory");
 			th.endDocument();
 			logger.info("XML Inventory ends ");
+
 		}
 	}
 
@@ -163,11 +168,10 @@ public class Txtxml {
 		double qty = 0.0;
 		if (qty_value.equals("-")) {
 			qty = Double.parseDouble("-" + qty_avail);
-		} 
-		else
-		{
+		} else {
 			qty = Double.parseDouble(qty_avail);
 		}
 		return qty;
 	}
+
 }
